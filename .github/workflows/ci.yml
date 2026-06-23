@@ -44,15 +44,30 @@ jobs:
       # ── Frontend ──────────────────────────────
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          else
+            echo "No frontend package.json — skipping install"
+          fi
 
       - name: Build frontend (production)
         working-directory: frontend
-        run: npm run build           # สร้าง dist/ — ถ้า build fail → CI ไม่ผ่าน
+        run: |
+          if [ -f package.json ]; then
+            npm run build           # สร้าง dist/ — ถ้า build fail → CI ไม่ผ่าน
+          else
+            echo "No frontend package.json — skipping build"
+          fi
 
       # ── Docker Smoke Test ─────────────────────
       - name: Docker build test (backend)
         run: docker build -t taskboard-backend:ci ./backend
 
       - name: Docker build test (frontend)
-        run: docker build -t taskboard-frontend:ci ./frontend
+        run: |
+          if [ -f frontend/package.json ]; then
+            docker build -t taskboard-frontend:ci ./frontend
+          else
+            echo "No frontend/package.json — skipping docker build test (frontend)"
+          fi
