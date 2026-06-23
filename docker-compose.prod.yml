@@ -17,7 +17,7 @@ services:
       retries: 5
 
   backend:
-    image: achirawit1/taskboard-backend:latest
+    build: ./backend         # ✅ Rebuild to use correct Docker networking
     container_name: taskboard-backend
     ports:
       - "3001:3001"  # ✅ EXPOSE TO HOST — this was missing!
