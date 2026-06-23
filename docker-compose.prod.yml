@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: taskboard-db
+    environment:
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass123
+      POSTGRES_DB: taskboard
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U taskuser -d taskboard" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: achirawit1/taskboard-backend:latest
+    container_name: taskboard-backend
+    ports:
+      - "3001:3001"  # ✅ EXPOSE TO HOST — this was missing!
+    environment:
+      DB_HOST: db            # Use service name, not localhost
+      DB_PORT: 5432
+      DB_NAME: taskboard
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass123
+      PORT: 3001
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    image: achirawit1/taskboard-frontend:latest
+    container_name: taskboard-frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+volumes:
+  db_data:
