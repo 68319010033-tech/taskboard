@@ -29,3 +29,6 @@ docker compose up --build
 | POST | /api/tasks | สร้างงานใหม่ |
 | PUT | /api/tasks/:id | แก้ไขงาน |
 | DELETE | /api/tasks/:id | ลบงาน |
+
+![CI](https://github.com/achirawit1/taskboard/actions/workflows/ci.yml/badge.svg)
+![CD](https://github.com/achirawit1/taskboard/actions/workflows/cd.yml/badge.svg)
